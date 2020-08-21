@@ -1,0 +1,11 @@
+C:\Users\Pasha\Source\Repos\HttpClientWpf\CommandsLibrary\CommandsLibrary\bin\Release\CommandsLibrary.dll.config
+C:\Users\Pasha\Source\Repos\HttpClientWpf\CommandsLibrary\CommandsLibrary\bin\Release\CommandsLibrary.dll
+C:\Users\Pasha\Source\Repos\HttpClientWpf\CommandsLibrary\CommandsLibrary\bin\Release\CommandsLibrary.pdb
+C:\Users\Pasha\Source\Repos\HttpClientWpf\CommandsLibrary\CommandsLibrary\bin\Release\Newtonsoft.Json.dll
+C:\Users\Pasha\Source\Repos\HttpClientWpf\CommandsLibrary\CommandsLibrary\bin\Release\System.Net.Http.Formatting.dll
+C:\Users\Pasha\Source\Repos\HttpClientWpf\CommandsLibrary\CommandsLibrary\bin\Release\Newtonsoft.Json.xml
+C:\Users\Pasha\Source\Repos\HttpClientWpf\CommandsLibrary\CommandsLibrary\bin\Release\System.Net.Http.Formatting.xml
+C:\Users\Pasha\Source\Repos\HttpClientWpf\CommandsLibrary\CommandsLibrary\obj\Release\CommandsLibrary.csprojAssemblyReference.cache
+C:\Users\Pasha\Source\Repos\HttpClientWpf\CommandsLibrary\CommandsLibrary\obj\Release\CommandsLibrary.csproj.CopyComplete
+C:\Users\Pasha\Source\Repos\HttpClientWpf\CommandsLibrary\CommandsLibrary\obj\Release\CommandsLibrary.dll
+C:\Users\Pasha\Source\Repos\HttpClientWpf\CommandsLibrary\CommandsLibrary\obj\Release\CommandsLibrary.pdb
