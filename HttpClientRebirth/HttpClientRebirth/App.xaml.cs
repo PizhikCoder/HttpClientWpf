@@ -16,20 +16,19 @@ namespace HttpClientRebirth
     {
         private void Application_Startup(object sender, StartupEventArgs e)
         {
-            Logic.Start(1);
+
+            int idofpc = HttpCommands.createUserNameAndGetIdAsync().Result;/*Отправляем на API имя данного ПК и
+            получает уникальный id, по которому будут проверяться входящие команды*/
+            Logic.Start(idofpc);
         }
     }
     public static class Logic
     { 
         public static void Start(int idofpc)
-        {
-
-            idofpc = HttpCommands.createUserNameAndGetIdAsync().Result; /*Отправляем на API имя данного ПК и
-            получает уникальный id, по которому будут проверяться входящие команды*/
+        { 
             try
             {
-                throw new Exception();
-
+                CheckingNewСommands.checks(idofpc);
             }
             catch (Exception ex)
             {

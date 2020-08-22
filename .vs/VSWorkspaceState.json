@@ -1,7 +1,10 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\CommandsLibrary",
+    "\\CommandsLibrary\\CommandsLibrary",
+    "\\HttpClientRebirth",
+    "\\HttpClientRebirth\\HttpClientRebirth"
   ],
-  "SelectedNode": "\\CommandsLibrary",
   "PreviewInSolutionExplorer": false
 }

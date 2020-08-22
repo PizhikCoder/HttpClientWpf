@@ -21,3 +21,4 @@ C:\Users\Pasha\Source\Repos\HttpClientWpf\HttpClientRebirth\HttpClientRebirth\ob
 C:\Users\Pasha\Source\Repos\HttpClientWpf\HttpClientRebirth\HttpClientRebirth\bin\Debug\CommandsLibrary.dll
 C:\Users\Pasha\Source\Repos\HttpClientWpf\HttpClientRebirth\HttpClientRebirth\bin\Debug\CommandsLibrary.pdb
 C:\Users\Pasha\Source\Repos\HttpClientWpf\HttpClientRebirth\HttpClientRebirth\bin\Debug\CommandsLibrary.dll.config
+C:\Users\Pasha\Source\Repos\HttpClientWpf\HttpClientRebirth\HttpClientRebirth\obj\Debug\HttpClientRebirth.csproj.CoreCompileInputs.cache
