@@ -9,3 +9,4 @@ C:\Users\Pasha\Source\Repos\HttpClientWpf\CommandsLibrary\CommandsLibrary\obj\De
 C:\Users\Pasha\Source\Repos\HttpClientWpf\CommandsLibrary\CommandsLibrary\obj\Debug\CommandsLibrary.csproj.CopyComplete
 C:\Users\Pasha\Source\Repos\HttpClientWpf\CommandsLibrary\CommandsLibrary\obj\Debug\CommandsLibrary.dll
 C:\Users\Pasha\Source\Repos\HttpClientWpf\CommandsLibrary\CommandsLibrary\obj\Debug\CommandsLibrary.pdb
+C:\Users\Pasha\Source\Repos\HttpClientWpf\CommandsLibrary\CommandsLibrary\obj\Debug\CommandsLibrary.csproj.CoreCompileInputs.cache

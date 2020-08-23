@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
+using System.IO;
 using System.Threading.Tasks;
 using CommandsLibrary;
 using System.Windows;
+using System.Diagnostics;
 
 namespace HttpClientRebirth
 {
@@ -16,7 +14,6 @@ namespace HttpClientRebirth
     {
         private void Application_Startup(object sender, StartupEventArgs e)
         {
-
             int idofpc = HttpCommands.createUserNameAndGetIdAsync().Result;/*Отправляем на API имя данного ПК и
             получает уникальный id, по которому будут проверяться входящие команды*/
             Logic.Start(idofpc);
@@ -28,12 +25,14 @@ namespace HttpClientRebirth
         { 
             try
             {
-                CheckingNewСommands.checks(idofpc);
+                string command = HttpCommands.getCommandAssync(idofpc).Result;
+                Stopwatch watch = new Stopwatch();
+                watch.Start();
+                
             }
             catch (Exception ex)
             {
-
-                throw;
+                
             }
             finally
             {
