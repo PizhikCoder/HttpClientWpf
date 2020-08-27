@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Net.Http;
 using System.Web.Script.Serialization;
 using System.Linq;
+using System.Threading;
 
 namespace CommandsLibrary
 {
@@ -18,7 +19,7 @@ namespace CommandsLibrary
     {
         public string command { get; set; }
     }
-    public class HttpCommands
+    public class HttpCommands //Содержит команды взаимодействия с API
     {
         public static async Task<Int32> createUserNameAndGetIdAsync()//Отправляет на API Имя текущего компьютера и получает уникальный Id
         {
@@ -54,7 +55,11 @@ namespace CommandsLibrary
             }
         }
     }
-    public class CommandsList
+    public class ScreensGeneration
+    {
+
+    }
+    public class CommandsList //Содержит логику выполнения команд
     {
         public static string startCommand(string path)
         {
@@ -74,10 +79,13 @@ namespace CommandsLibrary
                 Process.Start(path);
                 return "Done!";
             }
-        }
+        }//Команда запуска приложения согласно заданному пути
         public static string nameofpcCommand()
         {
             return Environment.UserName;
+        }//Команда возвращает имя пользователя ПК в текущей сессии
+        public static void videoTranslationThreads()//Метод создает 2 потока, которые начинают отправку скриншотов
+        {
         }
     }
     public class ClientCommands:CommandsList
@@ -97,6 +105,10 @@ namespace CommandsLibrary
                     break;
                 case "/nameofpc":
                     return nameofpcCommand();
+                    break;
+                case "/videotranslation":
+
+                    return "Done!";
                     break;
                 default:
                     return "Комманда введена неверно или отсутствует у клиента";
