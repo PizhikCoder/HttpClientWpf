@@ -31,6 +31,8 @@ namespace NNDataFunctions
     }
     class Values//Класс с текущими собранными данными
     {
+        public static float OverallRating;
+
         public static float MouseInfo = -1;
         public static float KeyBoardInfo = -1;
         public static float ProcessesInfo = -1;
@@ -146,6 +148,7 @@ namespace NNDataFunctions
     {
         public static void Start()//Запускает сбор информации, загружает ее в NN и вызывает метод составления и отправки отчета
         {
+            float nnResult = 0;
             NNDataReceiving.watch.Start();//Запускает секундомер для фиксации времени работы классов по сбору информации
             Thread thr1 = new Thread(new ThreadStart(NNDataReceiving.ProcessesInfoReceiving));//Поток сбора информации о процессах
             Thread thr2 = new Thread(new ThreadStart(NNDataReceiving.KeyBoardInfoReceiving));//Поток для сбора информации о нажатых клавишах
@@ -158,11 +161,14 @@ namespace NNDataFunctions
             thr1.Abort();
             thr2.Abort();
             NNDataReceiving.watch.Stop();
-            App.CreateJournalLines("*основная сводка полученных данных:\n" +
+            App.CreateJournalLines("*Основная сводка полученных данных:\n" +
                                    $"                                   MouseInfo: {Values.MouseInfo}\n" +
                                    $"                                   KeyBoardInfo: {Values.KeyBoardInfo}\n"+
                                    $"                                   ProcessesInfo: {Values.ProcessesInfo}*");
-            if (NN.GetDataFromNN(MouseInfo, KeyBoardInfo, ProcessesInfo) == 1)//Проверка значения, предзказанного нейронной сетью. Если подозрение 1 - создается отчет, если 0 - не создается
+            nnResult = NN.GetDataFromNN(MouseInfo, KeyBoardInfo, ProcessesInfo);
+            Values.OverallRating = nnResult;
+            App.CreateJournalLines($"*Оценка нейронной сети: {nnResult}*");
+            if (nnResult >= 0.5)//Проверка значения, предзказанного нейронной сетью. Если подозрение 1 - создается отчет, если 0 - не создается
             {
                 App.CreateJournalLines("*Начат процесс создания отчета...*");
                 ReportCreator();
@@ -173,7 +179,7 @@ namespace NNDataFunctions
         {
             Report report = new Report
             {
-                OverallRating = 1,
+                OverallRating = Values.OverallRating,
                 KeyBoardRating = (int)Values.KeyBoardInfo,
                 MouseRating = (int)Values.MouseInfo,
                 ProcessRating = (int)Values.ProcessesInfo,

@@ -46,7 +46,7 @@ namespace NNMethods
             App.CreateJournalLines("*Идет обучение...*");
             modelGlobal = pipeline.Fit(data);
         }
-        public static int GetDataFromNN(float MouseInfoNew, float KeyBoardInfoNew, float ProcessesInfoNew)
+        public static float GetDataFromNN(float MouseInfoNew, float KeyBoardInfoNew, float ProcessesInfoNew)
         {
             float result;
             App.CreateJournalLines("*Данные загружаются в нейронную сеть...*");
@@ -60,7 +60,7 @@ namespace NNMethods
                 }
                 ).PredictedLabels;
             App.CreateJournalLines("*Результат получен*");
-            return Convert.ToInt32(result);
+            return result;
         }
 
         public static void StartNNTraining()

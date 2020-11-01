@@ -29,7 +29,9 @@ namespace HTTP_WPF_Client_Project
                 }
                 else
                 {
-                    CreateJournalLines("\n*Программа перезапущена*");
+                    CreateJournalLines("\n");
+                    CreateJournalLines("########################");
+                    CreateJournalLines("*Программа перезапущена*");
                 }
 
                 NN.StartNNTraining();
