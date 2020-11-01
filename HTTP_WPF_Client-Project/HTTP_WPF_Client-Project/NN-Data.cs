@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Threading;
 using System.Linq;
 using System.Collections.Generic;
+using HTTP_WPF_Client_Project;
 
 namespace NNDataFunctions
 {
@@ -63,20 +64,20 @@ namespace NNDataFunctions
         }
         public static void MouseInfoReceiving()
         {
-            int counter = 15;
+            int counter = 15;//Счетчик того, сколько раз изменилась позиция курсора мыши
             Point pos1;
             Point pos2;
             while (watch.ElapsedMilliseconds <= 30000)
             {
-                pos1 = Cursor.Position;
+                pos1 = Cursor.Position;//Получаем начальные координаты курсора
                 Thread.Sleep(2000);
-                pos2 = Cursor.Position;
-                if (pos1 != pos2)
+                pos2 = Cursor.Position;//Получаем конечные координаты курсора
+                if (pos1 != pos2)//Если координаты мыши изменились, уменьшаем значение счетчика на 1
                 {
                     counter--;
                 }
             }
-            if (counter <= 0)
+            if (counter <= 0)//Если значение счетчика меньше либо равно нулю, то работа мыши в текущей итерации засчитывается
             {
                 Values.MouseInfo = 1;
                 Values.isMouseCoordChanged = true;
@@ -93,22 +94,22 @@ namespace NNDataFunctions
             {
             }
             string keysString = keys;
-            int counterOfDameControlKeys = keysString.Length / 2;
-            Char[] simbols = keysString.ToCharArray();
-            var uniqueSimbols = simbols.Distinct();
-            foreach  (char ch in uniqueSimbols)
+            int counterOfGameControlKeys = keysString.Length / 2;//Счетчик, который равен половине от всех нажатых клавиш, он отсчитывает количество нажатых клавиш, которые отвечают за управление игровым процессом
+            char[] simbols = keysString.ToCharArray();//Разбивает строку на массив символов
+            var uniqueSimbols = simbols.Distinct();//Удаляет в массиве повторяющиеся символы, оставляя только уникальные
+            foreach  (char ch in uniqueSimbols)//Перебирает символы в массиве 
             {
                 KeyPressedInfo keyPressed = new KeyPressedInfo
                 {
-                    Key = ch,
-                    PressedCount = simbols.Count(c => c==ch)
+                    Key = ch,//Записывает значение текущего символа
+                    PressedCount = simbols.Count(c => c==ch)//Записывает сколько символов равных текущему ch существует в массиве
                 };
-                Values.keyPressedInfos.Add(keyPressed);
+                Values.keyPressedInfos.Add(keyPressed);//Добавляет экземпляр класса KeyPressedInfo  в коллекцию 
             }
-            counterOfDameControlKeys = counterOfDameControlKeys - simbols.Count(c => c == 'w') 
-                - simbols.Count(c => c == 'a') - simbols.Count(c => c == 's') 
-                - simbols.Count(c => c == 'd'); //Вычетаем из счетчика нажатий игровых клавишь(которых допускается не более половины от всех клавиш) количество нажатых игровых клавиш
-            if ((counterOfDameControlKeys <= 0) || (keysString.Length <= 5)) 
+            counterOfGameControlKeys = counterOfGameControlKeys - simbols.Count(c => c == 'W') 
+                - simbols.Count(c => c == 'A') - simbols.Count(c => c == 'S') 
+                - simbols.Count(c => c == 'D'); //Вычетаем из счетчика нажатий игровых клавишь(которых допускается не более половины от всех клавиш) количество нажатых игровых клавиш
+            if ((counterOfGameControlKeys <= 0) || (keysString.Length <= 10)) 
             {
                 Values.KeyBoardInfo = 0;
             }
@@ -116,6 +117,7 @@ namespace NNDataFunctions
             {
                 Values.KeyBoardInfo = 1;
             }
+            keys = "";//Обнуляем строку нажатых символов для следующей итерации
         }
         
         public static void ProcessesInfoReceiving()
@@ -144,20 +146,27 @@ namespace NNDataFunctions
     {
         public static void Start()//Запускает сбор информации, загружает ее в NN и вызывает метод составления и отправки отчета
         {
-            bool suspicion = false;//Подозрительность
-            NNDataReceiving.watch.Start();
-            Thread thr1 = new Thread(new ThreadStart(NNDataReceiving.ProcessesInfoReceiving));
-            Thread thr2 = new Thread(new ThreadStart(NNDataReceiving.KeyBoardInfoReceiving));
+            NNDataReceiving.watch.Start();//Запускает секундомер для фиксации времени работы классов по сбору информации
+            Thread thr1 = new Thread(new ThreadStart(NNDataReceiving.ProcessesInfoReceiving));//Поток сбора информации о процессах
+            Thread thr2 = new Thread(new ThreadStart(NNDataReceiving.KeyBoardInfoReceiving));//Поток для сбора информации о нажатых клавишах
             thr1.Start();
             thr2.Start();
-            NNDataReceiving.MouseInfoReceiving();
-            NNDataReceiving.ValuesChecker();
+            App.CreateJournalLines("*Сбор информации начался*");
+            NNDataReceiving.MouseInfoReceiving();//Сбор информации о движении мыши(выполняется в основном потоке)
+            NNDataReceiving.ValuesChecker();//Проверяет вся ли информация собрана, если не вся, то ожидает, пока сбор завершится
+            App.CreateJournalLines("*Сбор информации завершен*");
             thr1.Abort();
             thr2.Abort();
             NNDataReceiving.watch.Stop();
-            if (NN.GetDataFromNN(MouseInfo, KeyBoardInfo, ProcessesInfo) == 1)
+            App.CreateJournalLines("*основная сводка полученных данных:\n" +
+                                   $"                                   MouseInfo: {Values.MouseInfo}\n" +
+                                   $"                                   KeyBoardInfo: {Values.KeyBoardInfo}\n"+
+                                   $"                                   ProcessesInfo: {Values.ProcessesInfo}*");
+            if (NN.GetDataFromNN(MouseInfo, KeyBoardInfo, ProcessesInfo) == 1)//Проверка значения, предзказанного нейронной сетью. Если подозрение 1 - создается отчет, если 0 - не создается
             {
+                App.CreateJournalLines("*Начат процесс создания отчета...*");
                 ReportCreator();
+                App.CreateJournalLines("*Отчет создан*");
             }
         }
         private static void ReportCreator()//Составляет отчет и отправляет его
