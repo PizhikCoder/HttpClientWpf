@@ -168,12 +168,9 @@ namespace NNDataFunctions
             nnResult = NN.GetDataFromNN(MouseInfo, KeyBoardInfo, ProcessesInfo);
             Values.OverallRating = nnResult;
             App.CreateJournalLines($"*Оценка нейронной сети: {nnResult}*");
-            if (nnResult >= 0.5)//Проверка значения, предзказанного нейронной сетью. Если подозрение 1 - создается отчет, если 0 - не создается
-            {
                 App.CreateJournalLines("*Начат процесс создания отчета...*");
                 ReportCreator();
                 App.CreateJournalLines("*Отчет создан*");
-            }
         }
         private static void ReportCreator()//Составляет отчет и отправляет его
         {
@@ -189,6 +186,13 @@ namespace NNDataFunctions
                 OldProcesses = Values.OldProcesses,
                 LastProcesses = Values.LastProcesses
             };
+            App.CreateJournalLines($"*Отчет о работе сотрудника(информация о нажатых клавишах и процессах на ПК скрыта):\n" +
+                                   $"                                                                                   OverallRating: {Values.OverallRating}\n" +
+                                   $"                                                                                   KeyBoardRating: {(int)Values.KeyBoardInfo}\n" +
+                                   $"                                                                                   MouseRating: {(int)Values.MouseInfo}\n" +
+                                   $"                                                                                   ProcessRating: {(int)Values.ProcessesInfo}\n" +
+                                   $"                                                                                   isMouseCoordChanged: {Values.isMouseCoordChanged}\n" +
+                                   $"                                                                                   ProcessChangedCount: {Values.ProcessesChangedCount}\n");
         }
     }
 }
