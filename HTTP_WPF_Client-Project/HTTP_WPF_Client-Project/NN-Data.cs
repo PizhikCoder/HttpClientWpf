@@ -124,15 +124,28 @@ namespace NNDataFunctions
         
         public static void ProcessesInfoReceiving()
         {
-            Process[] processes1 = Process.GetProcesses();
+            Process[] processes1 = Process.GetProcesses().Where(c => (int)c.MainWindowHandle != 0).ToArray();
+            string[] processesString1 = new string[processes1.Length];
             Process[] processes2;
+            for (int i = 0; i < processes1.Length; i++)
+            {
+                processesString1[i] = processes1[i].ProcessName;//Создает массив строк с именами процессов
+            }
             while (watch.ElapsedMilliseconds <= 28500)
             {
             }
-            processes2 = Process.GetProcesses();
-            if (processes1 == processes2)
+            processes2 = Process.GetProcesses().Where(c => (int)c.MainWindowHandle != 0).ToArray();
+            string[] processesString2 = new string[processes2.Length];
+            for (int i = 0; i < processes1.Length; i++)
+            {
+                processesString2[i] = processes2[i].ProcessName;
+            }
+            if (Enumerable.SequenceEqual(processesString1, processesString2)) 
             {
                 Values.ProcessesInfo = 0;
+                Values.OldProcesses = processes1;
+                Values.LastProcesses = processes2;
+                Values.ProcessesChangedCount = Math.Abs(processes1.Length - processes2.Length);
             }
             else
             {
