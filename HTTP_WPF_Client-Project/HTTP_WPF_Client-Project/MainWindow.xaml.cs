@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.SignalR.Client;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,5 +25,39 @@ namespace HTTP_WPF_Client_Project
         {
             InitializeComponent();
         }
+
+        #region Пример подключения к хабу
+        // каждое соединение должно создаваться отдельными экземплярами. это важно
+        private async Task ConfigueAndStartHubConnectionsAsync()
+        {
+            var connection = new HubConnectionBuilder()
+                .WithUrl($"") // сюда url
+                .Build(); // создать экземпляр соединения
+
+            /* var connection1 = new HubConnectionBuilder()
+                .WithUrl($"") // сюда еще url
+                .Build(); // создать еще один экземпляр соединения
+            //... */
+
+            connection.Closed += async (error) => // если соединение закрылось...
+            {
+                // при желании обработай Exception error
+                await connection.StartAsync(); // запустить соединение заново
+            };
+
+            connection.On("SomeMethod", SomeMethod); // если произошел вызов метода "SomeMethod" на сервере к этому клиенту, вот его обработчик
+
+            await connection.StartAsync(); // Запустить настроенное соединение
+
+            // после того как соединение запустилось, можно вызывать методы на сервере
+
+            await connection.InvokeAsync("DoSome"/*, после запятой можешь приложить какие-то объекты, если это требуется методу*/);
+        }
+
+        private void SomeMethod()
+        {
+            // сервер сообщил вам выполнить этот метод через HubConnection connection
+        }
+        #endregion
     }
 }
