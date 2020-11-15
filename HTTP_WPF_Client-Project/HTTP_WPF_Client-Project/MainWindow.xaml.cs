@@ -39,6 +39,11 @@ namespace HTTP_WPF_Client_Project
                 .Build(); // создать еще один экземпляр соединения
             //... */
 
+            // район установки таймаутов
+            connection.KeepAliveInterval = TimeSpan.FromDays(1);
+            connection.HandshakeTimeout = TimeSpan.FromDays(1);
+            connection.ServerTimeout = TimeSpan.FromDays(2);
+
             connection.Closed += async (error) => // если соединение закрылось...
             {
                 // при желании обработай Exception error
