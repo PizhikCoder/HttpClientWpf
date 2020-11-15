@@ -31,12 +31,16 @@ namespace HTTP_WPF_Client_Project
         private async Task ConfigueAndStartHubConnectionsAsync()
         {
             var connection = new HubConnectionBuilder()
-                .WithUrl($"") // сюда url
-                .Build(); // создать экземпляр соединения
+                .WithUrl($"", options => {
+                    options.UseDefaultCredentials = true;
+                    options.Cookies.Add(App.UserCookie);
+                }).Build(); // создать экземпляр соединения
 
             /* var connection1 = new HubConnectionBuilder()
-                .WithUrl($"") // сюда еще url
-                .Build(); // создать еще один экземпляр соединения
+                .WithUrl($"", options => {
+                    options.UseDefaultCredentials = true;
+                    options.Cookies.Add(App.UserCookie);
+                }).Build(); // создать еще один экземпляр соединения
             //... */
 
             // район установки таймаутов
