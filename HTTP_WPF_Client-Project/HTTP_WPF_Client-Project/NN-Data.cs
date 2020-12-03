@@ -14,20 +14,21 @@ namespace NNDataFunctions
 {
     class KeyPressedInfo
     {
-        public  char Key { get; set; }
-        public  int PressedCount { get; set; }
+        public string Key { get; set; }
+        public int PressedCount { get; set; }
     }
     class Report
     {
         public Client Client { get; set; }
-        public  float OverallRating { get; set; }
-        public   float KeyBoardRating { get; set; }
-        public  int MouseRating { get; set; }
-        public  int ProcessRating { get; set; }
+        public float OverallRating { get; set; }
+        public float KeyBoardRating { get; set; }
+        public int MouseRating { get; set; }
+        public int ProcessRating { get; set; }
 
-        public  ICollection<KeyPressedInfo> KeyPressedInfo { get; set; }
-        public  bool isMouseCoordChanged { get; set; }
-        public  int ProcessChangedCount { get; set; }
+        public ICollection<KeyPressedInfo> KeyPressedInfo { get; set; }
+        public int pressingCount { get; set; }
+        public bool isMouseCoordChanged { get; set; }
+        public int ProcessChangedCount { get; set; }
         public ICollection<string> OldProcesses { get; set; }
         public ICollection<string> LastProcesses { get; set; }
 
@@ -44,6 +45,7 @@ namespace NNDataFunctions
         public static int MouseCoordinatesChangedCount = 0;
         public static bool isMouseCoordChanged = false;
         public static List<KeyPressedInfo> keyPressedInfos = new List<KeyPressedInfo> { };
+        public static int pressingCount { get; set; }
         public static ICollection<string> OldProcesses { get; set; }
         public static ICollection<string> LastProcesses { get; set; }
     }
@@ -51,7 +53,7 @@ namespace NNDataFunctions
     class NNDataReceiving
     {
         public static Stopwatch watch = new Stopwatch();
-        public static string keys = "";
+        public static List<string> keys = new List<string>();
 
         public static string keyspressed = "";//Строка нажатых клавиш
         public static int waitingTime = 30000;
@@ -65,6 +67,7 @@ namespace NNDataFunctions
                 if (Values.MouseInfo != -1 && Values.KeyBoardInfo != -1 && Values.ProcessesInfo != -1)
                 {
                     key = true;
+                    watch.Reset();
                 }
             }
         }
@@ -99,35 +102,34 @@ namespace NNDataFunctions
             while (watch.ElapsedMilliseconds <= waitingTime)
             {
             }
-            string keysString = keys;
-            int allowableKeyRepeatCount = keysString.Length / 2;//Количество допускаемых повторений символа
+            List<string> keysCopy = keys;
+            int allowableKeyRepeatCount = keys.Count / 2;//Количество допускаемых повторений символа
             float rating;
-            int counterOfGameControlKeys = keysString.Length / 2;//Счетчик, который равен половине от всех нажатых клавиш, он отсчитывает количество нажатых клавиш, которые отвечают за управление игровым процессом
-            char[] simbols = keysString.ToCharArray();//Разбивает строку на массив символов
-            var uniqueSimbols = simbols.Distinct();//Удаляет в массиве повторяющиеся символы, оставляя только уникальные
-            foreach  (char ch in uniqueSimbols)//Перебирает символы в массиве 
+            int counterOfGameControlKeys = keys.Count / 2;//Счетчик, который равен половине от всех нажатых клавиш, он отсчитывает количество нажатых клавиш, которые отвечают за управление игровым процессом
+            keysCopy = keysCopy.Distinct().ToList();
+            foreach (string ch in keysCopy)//Перебирает символы в массиве 
             {
                 KeyPressedInfo keyPressed = new KeyPressedInfo
                 {
                     Key = ch,//Записывает значение текущего символа
-                    PressedCount = simbols.Count(c => c==ch)//Записывает сколько символов равных текущему ch существует в массиве
+                    PressedCount = keys.Count(c => c == ch)//Записывает сколько символов равных текущему ch существует в массиве
                 };
                 Values.keyPressedInfos.Add(keyPressed);//Добавляет экземпляр класса KeyPressedInfo  в коллекцию 
-                if (simbols.Count(x=>x==ch)>=allowableKeyRepeatCount)//Если число нажатий 1 симпола выше допустимого значения
+                if (keysCopy.Count(x => x == ch) >= allowableKeyRepeatCount)//Если число нажатий 1 симпола выше допустимого значения
                 {
                     counterOfGameControlKeys = 0;//Создаем ситуацию, в которой рейтинг клавиатуры будет 0
                 }
             }
-            counterOfGameControlKeys = counterOfGameControlKeys - simbols.Count(c => c == 'W') 
-                - simbols.Count(c => c == 'A') - simbols.Count(c => c == 'S') 
-                - simbols.Count(c => c == 'D'); //Вычетаем из счетчика нажатий игровых клавишь(которых допускается не более половины от всех клавиш) количество нажатых игровых клавиш
-            if (counterOfGameControlKeys <= 0) 
+            counterOfGameControlKeys = counterOfGameControlKeys - keys.Count(c => c == "W")
+                - keys.Count(c => c == "A") - keys.Count(c => c == "S")
+                - keys.Count(c => c == "D"); //Вычетаем из счетчика нажатий игровых клавишь(которых допускается не более половины от всех клавиш) количество нажатых игровых клавиш
+            if (counterOfGameControlKeys <= 0)
             {
                 Values.KeyBoardInfo = 0;
             }
             else
             {
-                rating = (float)keysString.Length / keyboardCoefficient;//Получение отношения числа нажатых клавиш к заданному коэффициенту
+                rating = (float)keys.Count / keyboardCoefficient;//Получение отношения числа нажатых клавиш к заданному коэффициенту
                 if (rating >= 1)
                 {
                     Values.KeyBoardInfo = 1;
@@ -137,7 +139,8 @@ namespace NNDataFunctions
                     Values.KeyBoardInfo = (float)Math.Round(rating, 1);
                 }
             }
-            keys = "";//Обнуляем строку нажатых символов для следующей итерации
+            Values.pressingCount = keys.Count;
+            keys = new List<string>();//Обнуляем список нажатых символов для следующей итерации
         }
         
         public static void ProcessesInfoReceiving()
@@ -158,7 +161,7 @@ namespace NNDataFunctions
             {
                 processesString2[i] = processes2[i].ProcessName;//Создает массив строк с именами процессов
             }
-            if (Enumerable.SequenceEqual(processesString1, processesString2)) 
+            if (Enumerable.SequenceEqual(processesString1, processesString2))
             {
                 Values.ProcessesInfo = 0;
                 Values.OldProcesses = processesString1;//Сохраняем полученные данные
@@ -187,10 +190,8 @@ namespace NNDataFunctions
             thr2.Start();
             App.CreateJournalLines("*Сбор информации начался*");
             NNDataReceiving.MouseInfoReceiving();//Сбор информации о движении мыши(выполняется в основном потоке)
-            NNDataReceiving.ValuesChecker();//Проверяет вся ли информация собрана, если не вся, то ожидает, пока сбор завершится
+            NNDataReceiving.ValuesChecker();//Проверяет вся ли информация собрана, если не вся, то ожидает, пока сбор завершится и обнуляет таймер
             App.CreateJournalLines("*Сбор информации завершен*");
-            thr1.Abort();
-            thr2.Abort();
             NNDataReceiving.watch.Stop();
             App.CreateJournalLines("*Основная сводка полученных данных:\n" +
                                    $"                                   MouseInfo: {Values.MouseInfo}\n" +
@@ -203,6 +204,7 @@ namespace NNDataFunctions
                 ReportCreator();
             App.CreateJournalLines("*Отчет отправлен*");
             App.CreateJournalLines("*Цикл работы завершен*");
+            App.isDataThreadWorking = false; //Указываем, что поток сбора и обработки данных завершил свою работу
         }
         private async static void ReportCreator()//Составляет отчет и отправляет его
         {
@@ -215,6 +217,7 @@ namespace NNDataFunctions
                 MouseRating = (int)Values.MouseInfo,
                 ProcessRating = (int)Values.ProcessesInfo,
                 KeyPressedInfo = Values.keyPressedInfos,
+                pressingCount = Values.pressingCount,
                 isMouseCoordChanged = Values.isMouseCoordChanged,
                 ProcessChangedCount = Values.ProcessesChangedCount,
                 OldProcesses = Values.OldProcesses,

@@ -25,12 +25,11 @@ namespace HTTP_WPF_Client_Project
         public static Cookie UserCookie; // куки файл, который используется для подключения к хабам сервера
         public static Client clientData;
         public static bool workingDayHasBegun;
+        public static bool isDataThreadWorking = false;
         private void Application_StartUp(object sender, StartupEventArgs e)
         {
             try
-            {
-                clientData = AuthUser(new string[] { Environment.UserName, "user" }, out UserCookie); // вызов метода авторизации
-                Commands.createConnection();//Создание соединения
+            {//Создание соединения
 
                 pathOfJournalFile = Environment.CurrentDirectory + @"\Reports\" + DateTime.Today.ToShortDateString().ToString() + ".txt";
 
@@ -48,25 +47,36 @@ namespace HTTP_WPF_Client_Project
 
                 NN.StartNNTraining();
 
+                clientData = AuthUser(new string[] { Environment.UserName, "user" }, out UserCookie); // вызов метода авторизации
+                Commands.createConnection();
+
                 while (!workingDayHasBegun)//Ожидание начала рабочего дня
                 {
                 }
+                if (_globalHook == null)//Оформляем событие по вытягиванию нажатых клавиш
+                {
+                    _globalHook = Hook.GlobalEvents();
+                    _globalHook.KeyDown += GlobalHookKeyPress;
+                }
+                MessageBox.Show("Рыбочий день начался!");
                 CreateJournalLines("*Рабочий день начался*");
                 while (workingDayHasBegun)
                 {
-                    if (_globalHook == null)//Оформляем событие по вытягиванию нажатых клавиш
-                    {
-                        _globalHook = Hook.GlobalEvents();
-                        _globalHook.KeyDown += GlobalHookKeyPress;
-                    }
 
                     Thread nnThread = new Thread(new ThreadStart(NNDataGettingControl.Start));
                     CreateJournalLines("*Запускается поток для обработки информации*");
+                    isDataThreadWorking = true;
                     nnThread.Start();//Создаем и запускаем поток для анализа данных
                     CreateJournalLines("*Поток для обработки информации запущен*");
+                    while (isDataThreadWorking)//Ожидает пока звершится сбор и обработка данных
+                    {
+
+                    }
+                    
                 }
                 CreateJournalLines("*Рабочий день завершен* + \n" +
                                     "##############################");
+                MessageBox.Show("Рабочий день завершен!");
             }
             catch (Exception ex)
             {
@@ -75,7 +85,7 @@ namespace HTTP_WPF_Client_Project
         }
         private static void GlobalHookKeyPress(object sender, KeyEventArgs e)//Обработчик собыьтия по вытягиванию нажатых клавиш
         {
-            NNDataReceiving.keys += e.KeyData.ToString();
+            NNDataReceiving.keys.Add(e.KeyData.ToString());
         }
         public static void CreateJournalLines(string lines)//Добавляет в файл журнала заданную строку
         {

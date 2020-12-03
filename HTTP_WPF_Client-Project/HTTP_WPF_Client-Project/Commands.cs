@@ -17,7 +17,8 @@ namespace ConnectionCommands
         public static HubConnection Connection;
         public async static void createConnection()
         {
-            var connection = new HubConnectionBuilder()
+            var connection = new HubConnectionBuilder();
+            Connection = connection
                 .WithUrl("http://amwe-server.glitch.me/report" /* "http://localhost:59885/report" */, options =>
                 {
                     options.UseDefaultCredentials = true;
@@ -25,18 +26,15 @@ namespace ConnectionCommands
                 })
                 .Build();
 
-            connection.KeepAliveInterval = TimeSpan.FromDays(1);
-            connection.HandshakeTimeout = TimeSpan.FromDays(1);
-            connection.ServerTimeout = TimeSpan.FromDays(2);
-            connection.Closed += async (error) =>
+            Connection.ServerTimeout = TimeSpan.FromDays(2);
+            Connection.Closed += async (error) =>
             {
                 await Task.Delay(new Random().Next(0, 5) * 1000);
-                await connection.StartAsync();
+                await Connection.StartAsync();
             };
 
-            connection.On<bool>("SetWorkday", new Action<bool>((isWorkdayStarted) => { App.workingDayHasBegun = isWorkdayStarted; }));
-            await connection.StartAsync();
-            Connection = connection;
+            Connection.On<bool>("SetWorkday", new Action<bool>((isWorkdayStarted) => { App.workingDayHasBegun = isWorkdayStarted; }));
+            Task.Run(async ()=> { await Connection.StartAsync(); }).Wait();
         }
     }
 }
