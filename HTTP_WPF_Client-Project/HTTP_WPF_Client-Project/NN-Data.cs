@@ -8,6 +8,7 @@ using System.Linq;
 using System.Collections.Generic;
 using HTTP_WPF_Client_Project;
 using Microsoft.AspNetCore.SignalR.Client;
+using ConnectionCommands;
 
 namespace NNDataFunctions
 {
@@ -219,8 +220,10 @@ namespace NNDataFunctions
                 OldProcesses = Values.OldProcesses,
                 LastProcesses = Values.LastProcesses
             };
-            await ConnectionCommands.Commands.Connection.InvokeAsync("SendReport", report);
-
+            App.CreateJournalLines("*Отчет создан*");
+            App.CreateJournalLines("*Отправка*");
+            Commands.Connection.InvokeAsync("SendReport", report).Wait();
+            App.CreateJournalLines("*Отчет отправлен*");
             App.CreateJournalLines($"*Отчет о работе сотрудника(информация о нажатых клавишах и процессах на ПК скрыта):\n" +
                                    $"                                                                                   OverallRating: {Values.OverallRating}\n" +
                                    $"                                                                                   KeyBoardRating: {(int)Values.KeyBoardInfo}\n" +

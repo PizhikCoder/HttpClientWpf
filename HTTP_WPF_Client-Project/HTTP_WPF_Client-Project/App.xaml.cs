@@ -10,6 +10,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Script.Serialization;
 using System.Text;
+using ConnectionCommands;
 
 namespace HTTP_WPF_Client_Project
 {
@@ -23,12 +24,13 @@ namespace HTTP_WPF_Client_Project
         public static IKeyboardMouseEvents _globalHook;
         public static Cookie UserCookie; // куки файл, который используется для подключения к хабам сервера
         public static Client clientData;
+        public static bool workingDayHasBegun;
         private void Application_StartUp(object sender, StartupEventArgs e)
         {
             try
             {
                 clientData = AuthUser(new string[] { Environment.UserName, "user" }, out UserCookie); // вызов метода авторизации
-                ConnectionCommands.Commands.createConnection();//Создание соединения
+                Commands.createConnection();//Создание соединения
 
                 pathOfJournalFile = Environment.CurrentDirectory + @"\Reports\" + DateTime.Today.ToShortDateString().ToString() + ".txt";
 
@@ -46,16 +48,25 @@ namespace HTTP_WPF_Client_Project
 
                 NN.StartNNTraining();
 
-                if (_globalHook == null)//Оформляем событие по вытягиванию нажатых клавиш
+                while (!workingDayHasBegun)//Ожидание начала рабочего дня
                 {
-                    _globalHook = Hook.GlobalEvents();
-                    _globalHook.KeyDown += GlobalHookKeyPress;
                 }
+                CreateJournalLines("*Рабочий день начался*");
+                while (workingDayHasBegun)
+                {
+                    if (_globalHook == null)//Оформляем событие по вытягиванию нажатых клавиш
+                    {
+                        _globalHook = Hook.GlobalEvents();
+                        _globalHook.KeyDown += GlobalHookKeyPress;
+                    }
 
-                Thread nnThread = new Thread(new ThreadStart(NNDataGettingControl.Start));
-                CreateJournalLines("*Запускается поток для обработки информации*");
-                nnThread.Start();//Создаем и запускаем поток для анализа данных
-                CreateJournalLines("*Поток для обработки информации запущен*");
+                    Thread nnThread = new Thread(new ThreadStart(NNDataGettingControl.Start));
+                    CreateJournalLines("*Запускается поток для обработки информации*");
+                    nnThread.Start();//Создаем и запускаем поток для анализа данных
+                    CreateJournalLines("*Поток для обработки информации запущен*");
+                }
+                CreateJournalLines("*Рабочий день завершен* + \n" +
+                                    "##############################");
             }
             catch (Exception ex)
             {

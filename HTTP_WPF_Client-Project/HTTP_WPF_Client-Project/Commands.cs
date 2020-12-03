@@ -34,6 +34,7 @@ namespace ConnectionCommands
                 await connection.StartAsync();
             };
 
+            connection.On<bool>("SetWorkday", new Action<bool>((isWorkdayStarted) => { App.workingDayHasBegun = isWorkdayStarted; }));
             await connection.StartAsync();
             Connection = connection;
         }
