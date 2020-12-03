@@ -8,7 +8,7 @@ using System.IO;
 using System;
 using System.Net;
 using System.Net.Http;
-using System.Web.Script.Serialization;
+using Newtonsoft.Json;
 using System.Text;
 using ConnectionCommands;
 
@@ -98,7 +98,7 @@ namespace HTTP_WPF_Client_Project
                 };
                 client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
                 client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36");
-                string json = new JavaScriptSerializer().Serialize(authdata);
+                string json = JsonConvert.SerializeObject(authdata);
                 HttpResponseMessage response = client.PostAsync($"auth", new StringContent(json, Encoding.UTF8, "application/json")).GetAwaiter().GetResult();
                 response.EnsureSuccessStatusCode();
                 returnproduct = response.Content.ReadAsAsync<Client>().GetAwaiter().GetResult();
