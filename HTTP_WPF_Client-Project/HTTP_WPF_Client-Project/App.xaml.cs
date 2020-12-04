@@ -67,11 +67,11 @@ namespace HTTP_WPF_Client_Project
                 CreateJournalLines("*Поток для обработки информации запущен*");
 
 
-                MessageBox.Show("Рабочий день завершен!");
             }
             catch (Exception ex)
             {
                 CreateJournalLines("*Ошибка, получено исключение:*" + ex.ToString());
+                MessageBox.Show("Рабочий день завершен!");
             }
         }
         private static void startDataProcessing()
