@@ -46,8 +46,8 @@ namespace NNDataFunctions
         public static bool isMouseCoordChanged = false;
         public static List<KeyPressedInfo> keyPressedInfos = new List<KeyPressedInfo> { };
         public static int pressingCount { get; set; }
-        public static ICollection<string> OldProcesses { get; set; }
-        public static ICollection<string> LastProcesses { get; set; }
+        public static List<string> OldProcesses { get; set; }
+        public static List<string> LastProcesses { get; set; }
     }
 
     class NNDataReceiving
@@ -164,15 +164,15 @@ namespace NNDataFunctions
             if (Enumerable.SequenceEqual(processesString1, processesString2))
             {
                 Values.ProcessesInfo = 0;
-                Values.OldProcesses = processesString1;//Сохраняем полученные данные
-                Values.LastProcesses = processesString2;
+                Values.OldProcesses = processesString1.ToList();//Сохраняем полученные данные
+                Values.LastProcesses = processesString2.ToList();
                 Values.ProcessesChangedCount = Math.Abs(processes1.Length - processes2.Length);
             }
             else
             {
                 Values.ProcessesInfo = 1;
-                Values.OldProcesses = processesString1;//Сохраняем полученные данные
-                Values.LastProcesses = processesString2;
+                Values.OldProcesses = processesString1.ToList();//Сохраняем полученные данные
+                Values.LastProcesses = processesString2.ToList();
                 Values.ProcessesChangedCount = Math.Abs(processes1.Length - processes2.Length);
             }
         }
@@ -223,6 +223,9 @@ namespace NNDataFunctions
                 OldProcesses = Values.OldProcesses,
                 LastProcesses = Values.LastProcesses
             };
+
+            resetValuesData();
+
             App.CreateJournalLines("*Отчет создан*");
             App.CreateJournalLines("*Отправка*");
             Commands.Connection.InvokeAsync("SendReport", report).Wait();
@@ -235,6 +238,12 @@ namespace NNDataFunctions
                                    $"                                                                                   isMouseCoordChanged: {Values.isMouseCoordChanged}\n" +
                                    $"                                                                                   ProcessChangedCount: {Values.ProcessesChangedCount}\n");
 
+        }
+        private static void  resetValuesData() //Приводит все данные к изначальному незаданному виду
+        {
+            Values.keyPressedInfos = new List<KeyPressedInfo>();
+            Values.OldProcesses = new List<string>();
+            Values.LastProcesses = new List<string>();
         }
     }
 }

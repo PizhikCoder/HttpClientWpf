@@ -84,6 +84,7 @@ namespace HTTP_WPF_Client_Project
             CreateJournalLines("*Рабочий день завершен*  \n" +
                                 "##############################");
             MessageBox.Show("Рабочий день завершен!");
+            Environment.Exit(0);
         }
 
 
