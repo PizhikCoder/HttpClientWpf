@@ -1,5 +1,4 @@
 ﻿using Gma.System.MouseKeyHook;
-using KeyEventArgs =  System.Windows.Forms.KeyEventArgs;
 using NNMethods;
 using NNDataFunctions;
 using System.Windows;
@@ -21,7 +20,7 @@ namespace HTTP_WPF_Client_Project
     {
         public static string ServerAddress = "http://amwe-server.glitch.me/"; // Адрес сервера
         public static string pathOfJournalFile = "";//Путь к файлу журнала программы
-        public static IKeyboardMouseEvents _globalHook;
+        public static IKeyboardMouseEvents m_globalHook;
         public static Cookie UserCookie; // куки файл, который используется для подключения к хабам сервера
         public static Client clientData;
         public static bool workingDayHasBegun;
@@ -53,29 +52,21 @@ namespace HTTP_WPF_Client_Project
                 while (!workingDayHasBegun)//Ожидание начала рабочего дня
                 {
                 }
-                if (_globalHook == null)//Оформляем событие по вытягиванию нажатых клавиш
+                if (m_globalHook == null)//Оформляем событие по вытягиванию нажатых клавиш
                 {
-                    _globalHook = Hook.GlobalEvents();
-                    _globalHook.KeyDown += GlobalHookKeyPress;
+                    m_globalHook = Hook.GlobalEvents();
+                    m_globalHook.KeyDown += GlobalHookKeyDown;
                 }
                 MessageBox.Show("Рыбочий день начался!");
                 CreateJournalLines("*Рабочий день начался*");
-                while (workingDayHasBegun)
-                {
 
-                    Thread nnThread = new Thread(new ThreadStart(NNDataGettingControl.Start));
-                    CreateJournalLines("*Запускается поток для обработки информации*");
-                    isDataThreadWorking = true;
-                    nnThread.Start();//Создаем и запускаем поток для анализа данных
-                    CreateJournalLines("*Поток для обработки информации запущен*");
-                    while (isDataThreadWorking)//Ожидает пока звершится сбор и обработка данных
-                    {
 
-                    }
-                    
-                }
-                CreateJournalLines("*Рабочий день завершен* + \n" +
-                                    "##############################");
+                CreateJournalLines("*Запускается поток для обработки информации*");
+                Thread nnThread = new Thread(new ThreadStart(startDataProcessing));
+                nnThread.Start();//Создаем и запускаем поток для анализа данных
+                CreateJournalLines("*Поток для обработки информации запущен*");
+
+
                 MessageBox.Show("Рабочий день завершен!");
             }
             catch (Exception ex)
@@ -83,14 +74,36 @@ namespace HTTP_WPF_Client_Project
                 CreateJournalLines("*Ошибка, получено исключение:*" + ex.ToString());
             }
         }
-        private static void GlobalHookKeyPress(object sender, KeyEventArgs e)//Обработчик собыьтия по вытягиванию нажатых клавиш
+        private static void startDataProcessing()
+        {
+            while (workingDayHasBegun)
+            {
+
+                NNDataGettingControl.Start();
+
+            }
+            CreateJournalLines("*Рабочий день завершен*  \n" +
+                                "##############################");
+        }
+
+
+        private void GlobalHookKeyDown(object sender, System.Windows.Forms.KeyEventArgs e)//Обработчик собыьтия по вытягиванию нажатых клавиш
         {
             NNDataReceiving.keys.Add(e.KeyData.ToString());
         }
+
+
+        private void GlobalHookKeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
+        {
+            NNDataReceiving.keys.Add(e.KeyChar.ToString());
+        }
+
+
         public static void CreateJournalLines(string lines)//Добавляет в файл журнала заданную строку
         {
             File.AppendAllText(pathOfJournalFile, DateTime.Now.ToLongTimeString() + $"   {lines}\n");
         }
+
 
         public static Client AuthUser(string[] authdata, out Cookie cookie) // метод для авторизации на сервере
         {
