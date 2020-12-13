@@ -58,6 +58,7 @@ namespace NNDataFunctions
         public static string keyspressed = "";//Строка нажатых клавиш
         public static int waitingTime = 30000;
         public static int keyboardCoefficient = 30;
+        public static int mouseCoordinateChangedCounter = 15;//Счетчик того, сколько раз изменилась позиция курсора мыши
 
         public static void ValuesChecker() //Проверка, заполнены ли все значения
         {
@@ -73,7 +74,7 @@ namespace NNDataFunctions
         }
         public static void MouseInfoReceiving()
         {
-            int counter = 15;//Счетчик того, сколько раз изменилась позиция курсора мыши
+            int counter = mouseCoordinateChangedCounter;//Счетчик того, сколько раз изменилась позиция курсора мыши
             Point pos1;
             Point pos2;
             while (watch.ElapsedMilliseconds <= waitingTime)
@@ -115,7 +116,7 @@ namespace NNDataFunctions
                     PressedCount = keys.Count(c => c == ch)//Записывает сколько символов равных текущему ch существует в массиве
                 };
                 Values.keyPressedInfos.Add(keyPressed);//Добавляет экземпляр класса KeyPressedInfo  в коллекцию 
-                if (keysCopy.Count(x => x == ch) >= allowableKeyRepeatCount)//Если число нажатий 1 симпола выше допустимого значения
+                if (keys.Count(x => x == ch) >= allowableKeyRepeatCount)//Если число нажатий 1 символа выше допустимого значения
                 {
                     counterOfGameControlKeys = 0;//Создаем ситуацию, в которой рейтинг клавиатуры будет 0
                 }

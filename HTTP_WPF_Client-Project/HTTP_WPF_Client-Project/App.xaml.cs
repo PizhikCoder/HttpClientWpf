@@ -29,7 +29,7 @@ namespace HTTP_WPF_Client_Project
         {
             try
             {//Создание соединения
-
+                InitializeComponent();
                 pathOfJournalFile = Environment.CurrentDirectory + @"\Reports\" + DateTime.Today.ToShortDateString().ToString() + ".txt";
 
                 if (!File.Exists(pathOfJournalFile))//Проверка, существует ли файл журнала
@@ -44,37 +44,42 @@ namespace HTTP_WPF_Client_Project
                     CreateJournalLines("*Программа перезапущена*");
                 }
 
-                NN.StartNNTraining();
+
+                NN.StartNNTraining();//Выполняем тренировку нейронной сети
+
 
                 clientData = AuthUser(new string[] { Environment.UserName, "user" }, out UserCookie); // вызов метода авторизации
-                Commands.createConnection();
+                Commands.createConnection();//Создаем соединение с основным хабом
+                ChatConnectionLogic.createChatConnection();//Создаем соединение с хабом чата
 
-                while (!workingDayHasBegun)//Ожидание начала рабочего дня
-                {
-                }
+
+                CreateJournalLines("*Запускается поток для ожидания рабочего дня и обработки информации*");
+                Thread nnThread = new Thread(new ThreadStart(startWaitingWorkingdayAndDataProcessing));
+                nnThread.Start();//Создаем и запускаем поток для ожидания рабочего дня и анализа данных
+                CreateJournalLines("*Поток для ожидания рабочего дня и обработки информации запущен*");
+
+
                 if (m_globalHook == null)//Оформляем событие по вытягиванию нажатых клавиш
                 {
                     m_globalHook = Hook.GlobalEvents();
                     m_globalHook.KeyDown += GlobalHookKeyDown;
                 }
-                MessageBox.Show("Рыбочий день начался!");
-                CreateJournalLines("*Рабочий день начался*");
-
-
-                CreateJournalLines("*Запускается поток для обработки информации*");
-                Thread nnThread = new Thread(new ThreadStart(startDataProcessing));
-                nnThread.Start();//Создаем и запускаем поток для анализа данных
-                CreateJournalLines("*Поток для обработки информации запущен*");
-
-
             }
             catch (Exception ex)
             {
                 CreateJournalLines("*Ошибка, получено исключение:*" + ex.ToString());
             }
         }
-        private static void startDataProcessing()
+        private static void startWaitingWorkingdayAndDataProcessing()
         {
+            while (!workingDayHasBegun)//Ожидание начала рабочего дня
+            {
+            }
+            MessageBox.Show("Рыбочий день начался!");
+            CreateJournalLines("*Рабочий день начался*");
+
+
+            CreateJournalLines("*Обработка информации начата*");
             while (workingDayHasBegun)
             {
 
@@ -86,7 +91,6 @@ namespace HTTP_WPF_Client_Project
             MessageBox.Show("Рабочий день завершен!");
             Environment.Exit(0);
         }
-
 
         private void GlobalHookKeyDown(object sender, System.Windows.Forms.KeyEventArgs e)//Обработчик собыьтия по вытягиванию нажатых клавиш
         {
