@@ -203,7 +203,6 @@ namespace NNDataFunctions
             App.CreateJournalLines($"*Оценка нейронной сети: {nnResult}*");
                 App.CreateJournalLines("*Начат процесс создания отчета...*");
                 ReportCreator();
-            App.CreateJournalLines("*Отчет отправлен*");
             App.CreateJournalLines("*Цикл работы завершен*");
             App.isDataThreadWorking = false; //Указываем, что поток сбора и обработки данных завершил свою работу
         }

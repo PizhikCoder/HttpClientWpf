@@ -75,7 +75,7 @@ namespace HTTP_WPF_Client_Project
             while (!workingDayHasBegun)//Ожидание начала рабочего дня
             {
             }
-            MessageBox.Show("Рыбочий день начался!");
+            MessageBox.Show("Рабочий день начался!");
             CreateJournalLines("*Рабочий день начался*");
 
 

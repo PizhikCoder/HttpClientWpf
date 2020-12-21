@@ -29,7 +29,7 @@ namespace HTTP_WPF_Client_Project
             }).Build();
             ChatSystemConnection.ServerTimeout = TimeSpan.FromDays(2);
             ChatSystemConnection.On<uint>("OpenChat", OpenChat);
-            ChatSystemConnection.On<uint, string>("ReceiveMessage", RecieveMessage);
+            ChatSystemConnection.On<uint, string, string, DateTime>("ReceiveMessage", RecieveMessage);
             ChatSystemConnection.On<uint>("AcceptChatID", AcceptChat);
             ChatSystemConnection.On<uint>("CloseDeleteChat", DeleteChat);
             ChatSystemConnection.Closed += async (error) =>
@@ -82,10 +82,10 @@ namespace HTTP_WPF_Client_Project
             Chats.Remove(chat);
         }
 
-        private static void RecieveMessage(uint id, string text)
+        private static void RecieveMessage(uint id, string text, string user, DateTime timestamp)
         {
             Chat chat = Chats.Find(x => x.ChatId == id);
-            Application.Current.Dispatcher.Invoke(() => { chat.window.ChatBox.Text += DateTime.Now.ToLongTimeString() + ":   " + text + "\n"; });
+            Application.Current.Dispatcher.Invoke(() => { chat.window.ChatBox.Text += timestamp.ToLongTimeString() + $"  {user}:" + text + "\n"; });
         }
         public static void SendMessage(uint ChatId, string message)
         {
