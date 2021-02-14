@@ -106,7 +106,7 @@ namespace HTTP_WPF_Client_Project
 
         public static void CreateJournalLines(string lines)//Добавляет в файл журнала заданную строку
         {
-            File.AppendAllText(pathOfJournalFile, DateTime.Now.ToLongTimeString() + $"   {lines}\n");
+            File.AppendAllText(pathOfJournalFile, DateTime.Now.ToLongTimeString() + $"   {lines}\r\n");
         }
 
 
