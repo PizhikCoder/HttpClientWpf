@@ -63,7 +63,8 @@ namespace HTTP_WPF_Client_Project
                 isChatWorking = true
             };
             Chats.Add(chat);
-            window1.lbChatState.Content = "Чат с администратором №"+chatId.ToString();
+            window1.lbChatState.Content = chatId.ToString();
+            window1.label.Visibility = Visibility.Visible;
             window1.Visibility = Visibility.Visible;
             window1.Show();
             window1.Activate();
