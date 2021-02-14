@@ -86,7 +86,7 @@ namespace HTTP_WPF_Client_Project
                 NNDataGettingControl.Start();
 
             }
-            CreateJournalLines("*Рабочий день завершен*  \n" +
+            CreateJournalLines("*Рабочий день завершен*  \r\n" +
                                 "##############################");
             MessageBox.Show("Рабочий день завершен!");
             Environment.Exit(0);
