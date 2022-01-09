@@ -123,7 +123,12 @@ namespace NNDataFunctions
             }
             counterOfGameControlKeys = counterOfGameControlKeys - keys.Count(c => c == "W")
                 - keys.Count(c => c == "A") - keys.Count(c => c == "S")
-                - keys.Count(c => c == "D"); //Вычетаем из счетчика нажатий игровых клавишь(которых допускается не более половины от всех клавиш) количество нажатых игровых клавиш
+                - keys.Count(c => c == "D")
+                - keys.Count(c => c == "Z")
+                - keys.Count(c => c == "X")
+                - keys.Count(c => c == "C")
+                - keys.Count(c => c == "Q")
+                - keys.Count(c => c == "E"); //Вычетаем из счетчика нажатий игровых клавишь(которых допускается не более половины от всех клавиш) количество нажатых игровых клавиш
             if (counterOfGameControlKeys <= 0)
             {
                 Values.KeyBoardInfo = 0;
