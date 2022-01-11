@@ -34,7 +34,17 @@ namespace ConnectionCommands
             };
 
             Connection.On<bool>("SetWorkday", new Action<bool>((isWorkdayStarted) => { App.workingDayHasBegun = isWorkdayStarted; }));
+            Connection.On("RequestScreen", CreateScreen);
             Task.Run(async ()=> { await Connection.StartAsync(); }).Wait();
+        }
+        private static void CreateScreen()
+        {
+            Screen screen = new Screen()
+            {
+                id = 1,
+                bytes = ScreenshotLogic.createScreenshot()
+            };
+            Connection.SendAsync("TransferScreen", screen);
         }
     }
 }
