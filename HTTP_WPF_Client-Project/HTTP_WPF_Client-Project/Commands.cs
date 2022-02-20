@@ -50,7 +50,7 @@ namespace ConnectionCommands
                     MessageBox.Show("Рабочий день начался!");
                     App.CreateJournalLines("*Рабочий день начался*");
                     App.CreateJournalLines("*Обработка информации начата*");
-                    while (isWorkdayStarted)
+                    while (lastIsWorkDayStartedValue)
                     {
                         NNDataFunctions.NNDataGettingControl.Start();
                     }
@@ -60,6 +60,7 @@ namespace ConnectionCommands
             }
             if(isWorkdayStarted == false && lastIsWorkDayStartedValue == true)
             {
+                lastIsWorkDayStartedValue = false;
                 App.CreateJournalLines("*Рабочий день завершен*  \r\n" +
                                     "##############################");
                 MessageBox.Show("Рабочий день завершен!");

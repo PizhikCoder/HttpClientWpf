@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using HTTP_WPF_Client_Project;
 using Microsoft.AspNetCore.SignalR.Client;
 using ConnectionCommands;
+using System.Runtime.InteropServices;
 
 namespace NNDataFunctions
 {
@@ -28,7 +29,7 @@ namespace NNDataFunctions
         public ICollection<KeyPressedInfo> KeyPressedInfo { get; set; }
         public int PressingCount { get; set; }
         public bool IsMouseCoordChanged { get; set; }
-        public int ProcessChangedCount { get; set; }
+        public string CurrentProccess { get; set; }
         public ICollection<string> OldProcesses { get; set; }
         public ICollection<string> LastProcesses { get; set; }
         public string MainBrowser { get; set; }
@@ -43,7 +44,7 @@ namespace NNDataFunctions
         public static float KeyBoardInfo = -1;
         public static float ProcessesInfo = -1;
 
-        public static int ProcessesChangedCount = 0;
+        public static string CurrentProccess { get; set; }
         public static int MouseCoordinatesChangedCount = 0;
         public static bool isMouseCoordChanged = false;
         public static List<KeyPressedInfo> keyPressedInfos = new List<KeyPressedInfo> { };
@@ -57,6 +58,11 @@ namespace NNDataFunctions
 
     class NNDataReceiving
     {
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetForegroundWindow();
+
+        [DllImport("user32.dll")]
+        public static extern UInt32 GetWindowThreadProcessId(IntPtr hwnd, ref Int32 pid);
         public static Stopwatch watch = new Stopwatch();
         public static List<string> keys = new List<string>();
 
@@ -156,6 +162,7 @@ namespace NNDataFunctions
         
         public static void ProcessesInfoReceiving()
         {
+            string current = "";
             Process[] processes1 = Process.GetProcesses().Where(c => (int)c.MainWindowHandle != 0).ToArray();
             string[] processesString1 = new string[processes1.Length];
             Process[] processes2;
@@ -172,19 +179,29 @@ namespace NNDataFunctions
             {
                 processesString2[i] = processes2[i].ProcessName;//Создает массив строк с именами процессов
             }
+
+            //Активное на данный момент окно
+            IntPtr h = GetForegroundWindow();
+            int pid = 0;
+            GetWindowThreadProcessId(h, ref pid);
+            Process p = Process.GetProcessById(pid);
+            Process process = Process.GetProcessById(pid);
+            current = process.ProcessName;
+
+
             if (Enumerable.SequenceEqual(processesString1, processesString2))
             {
                 Values.ProcessesInfo = 0;
                 Values.OldProcesses = processesString1.ToList();//Сохраняем полученные данные
                 Values.LastProcesses = processesString2.ToList();
-                Values.ProcessesChangedCount = Math.Abs(processes1.Length - processes2.Length);
+                Values.CurrentProccess = current;
             }
             else
             {
                 Values.ProcessesInfo = 1;
                 Values.OldProcesses = processesString1.ToList();//Сохраняем полученные данные
                 Values.LastProcesses = processesString2.ToList();
-                Values.ProcessesChangedCount = Math.Abs(processes1.Length - processes2.Length);
+                Values.CurrentProccess = current;
             }
         }
     }
@@ -231,7 +248,7 @@ namespace NNDataFunctions
                 KeyPressedInfo = Values.keyPressedInfos,
                 PressingCount = Values.pressingCount,
                 IsMouseCoordChanged = Values.isMouseCoordChanged,
-                ProcessChangedCount = Values.ProcessesChangedCount,
+                CurrentProccess = Values.CurrentProccess,
                 OldProcesses = Values.OldProcesses,
                 LastProcesses = Values.LastProcesses,
                 MainBrowser = Values.MainBrowser,
@@ -250,7 +267,7 @@ namespace NNDataFunctions
                                    $"                                                                                   MouseRating: {(int)Values.MouseInfo}\n" +
                                    $"                                                                                   ProcessRating: {(int)Values.ProcessesInfo}\n" +
                                    $"                                                                                   isMouseCoordChanged: {Values.isMouseCoordChanged}\n" +
-                                   $"                                                                                   ProcessChangedCount: {Values.ProcessesChangedCount}\n");
+                                   $"                                                                                   ProcessChangedCount: {Values.CurrentProccess}\n");
 
         }
         private static void  resetValuesData() //Приводит все данные к изначальному незаданному виду
