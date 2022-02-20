@@ -23,7 +23,6 @@ namespace HTTP_WPF_Client_Project
         public static IKeyboardMouseEvents m_globalHook;
         public static Cookie UserCookie; // куки файл, который используется для подключения к хабам сервера
         public static Client clientData;
-        public static bool workingDayHasBegun;
         public static bool isDataThreadWorking = false;
         private void Application_StartUp(object sender, StartupEventArgs e)
         {
@@ -51,12 +50,13 @@ namespace HTTP_WPF_Client_Project
                 clientData = AuthUser(new string[] { Environment.UserName, "user" }, out UserCookie); // вызов метода авторизации
                 Commands.createConnection();//Создаем соединение с основным хабом
                 ChatConnectionLogic.createChatConnection();//Создаем соединение с хабом чата
+                ScreenshotsConnectionLogic.createScreenshotConnection();//Создаем соединение с хабом скриншотов экрана и вебкамеры
 
 
-                CreateJournalLines("*Запускается поток для ожидания рабочего дня и обработки информации*");
-                Thread nnThread = new Thread(new ThreadStart(startWaitingWorkingdayAndDataProcessing));
-                nnThread.Start();//Создаем и запускаем поток для ожидания рабочего дня и анализа данных
-                CreateJournalLines("*Поток для ожидания рабочего дня и обработки информации запущен*");
+                //CreateJournalLines("*Запускается поток для ожидания рабочего дня и обработки информации*");
+                //Thread nnThread = new Thread(new ThreadStart(startWaitingWorkingdayAndDataProcessing));
+                //nnThread.Start();//Создаем и запускаем поток для ожидания рабочего дня и анализа данных
+                //CreateJournalLines("*Поток для ожидания рабочего дня и обработки информации запущен*");
 
 
                 if (m_globalHook == null)//Оформляем событие по вытягиванию нажатых клавиш
@@ -72,24 +72,24 @@ namespace HTTP_WPF_Client_Project
         }
         private static void startWaitingWorkingdayAndDataProcessing()
         {
-            while (!workingDayHasBegun)//Ожидание начала рабочего дня
-            {
-            }
-            MessageBox.Show("Рабочий день начался!");
-            CreateJournalLines("*Рабочий день начался*");
+            //while (!workingDayHasBegun)//Ожидание начала рабочего дня
+            //{
+            //}
+            //MessageBox.Show("Рабочий день начался!");
+            //CreateJournalLines("*Рабочий день начался*");
 
 
-            CreateJournalLines("*Обработка информации начата*");
-            while (workingDayHasBegun)
-            {
+            //CreateJournalLines("*Обработка информации начата*");
+            //while (workingDayHasBegun)
+            //{
 
-                NNDataGettingControl.Start();
+            //    NNDataGettingControl.Start();
 
-            }
-            CreateJournalLines("*Рабочий день завершен*  \r\n" +
-                                "##############################");
-            MessageBox.Show("Рабочий день завершен!");
-            Environment.Exit(0);
+            //}
+            //CreateJournalLines("*Рабочий день завершен*  \r\n" +
+            //                    "##############################");
+            //MessageBox.Show("Рабочий день завершен!");
+            //Environment.Exit(0);
         }
 
         private void GlobalHookKeyDown(object sender, System.Windows.Forms.KeyEventArgs e)//Обработчик собыьтия по вытягиванию нажатых клавиш

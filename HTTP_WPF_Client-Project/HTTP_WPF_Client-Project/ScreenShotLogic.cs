@@ -22,8 +22,7 @@ namespace HTTP_WPF_Client_Project
             MemoryStream ms = new MemoryStream();
             bmp.Save(ms, ImageFormat.Png);
             byte[] imagebt = new byte[3110400];
-            imagebt = ms.ToArray();
-            return imagebt;
+            return ms.ToArray();
         }
     }
 }

@@ -26,11 +26,13 @@ namespace NNDataFunctions
         public int ProcessRating { get; set; }
 
         public ICollection<KeyPressedInfo> KeyPressedInfo { get; set; }
-        public int pressingCount { get; set; }
-        public bool isMouseCoordChanged { get; set; }
+        public int PressingCount { get; set; }
+        public bool IsMouseCoordChanged { get; set; }
         public int ProcessChangedCount { get; set; }
         public ICollection<string> OldProcesses { get; set; }
         public ICollection<string> LastProcesses { get; set; }
+        public string MainBrowser { get; set; }
+        public IEnumerable<Site> CurrentSites { get; set;}
 
     }
     class Values//Класс с текущими собранными данными
@@ -48,6 +50,9 @@ namespace NNDataFunctions
         public static int pressingCount { get; set; }
         public static List<string> OldProcesses { get; set; }
         public static List<string> LastProcesses { get; set; }
+        public static string MainBrowser { get; set; }
+        public static IEnumerable<Site> CurrentSites { get; set; }
+
     }
 
     class NNDataReceiving
@@ -189,6 +194,8 @@ namespace NNDataFunctions
         public static void Start()//Запускает сбор информации, загружает ее в NN и вызывает метод составления и отправки отчета
         {
             float nnResult = 0;
+            Values.MainBrowser = "chrome";
+            Values.CurrentSites = BrowsersLinks.getLinks();
             NNDataReceiving.watch.Start();//Запускает секундомер для фиксации времени работы классов по сбору информации
             Thread thr1 = new Thread(new ThreadStart(NNDataReceiving.ProcessesInfoReceiving));//Поток сбора информации о процессах
             Thread thr2 = new Thread(new ThreadStart(NNDataReceiving.KeyBoardInfoReceiving));//Поток для сбора информации о нажатых клавишах
@@ -222,11 +229,13 @@ namespace NNDataFunctions
                 MouseRating = (int)Values.MouseInfo,
                 ProcessRating = (int)Values.ProcessesInfo,
                 KeyPressedInfo = Values.keyPressedInfos,
-                pressingCount = Values.pressingCount,
-                isMouseCoordChanged = Values.isMouseCoordChanged,
+                PressingCount = Values.pressingCount,
+                IsMouseCoordChanged = Values.isMouseCoordChanged,
                 ProcessChangedCount = Values.ProcessesChangedCount,
                 OldProcesses = Values.OldProcesses,
-                LastProcesses = Values.LastProcesses
+                LastProcesses = Values.LastProcesses,
+                MainBrowser = Values.MainBrowser,
+                CurrentSites = Values.CurrentSites
             };
 
             resetValuesData();

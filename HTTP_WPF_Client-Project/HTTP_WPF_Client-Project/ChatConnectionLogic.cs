@@ -32,25 +32,12 @@ namespace HTTP_WPF_Client_Project
             ChatSystemConnection.On<uint, string, string, DateTime>("ReceiveMessage", RecieveMessage);
             ChatSystemConnection.On<uint>("AcceptChatID", AcceptChat);
             ChatSystemConnection.On<uint>("CloseDeleteChat", DeleteChat);
-            ChatSystemConnection.On("RequestScreen", CreateScreen);
             ChatSystemConnection.Closed += async (error) =>
             {
                 //
                 await ChatSystemConnection.StartAsync();
             };
             Task.Run(async () => { await ChatSystemConnection.StartAsync(); }).Wait();
-        }
-        private static async void CreateScreen()
-        {
-            //App.CreateJournalLines("*Создается скриншот*");
-            Screen screen = new Screen()
-            {
-                id = 1,
-                bytes = ScreenshotLogic.createScreenshot()
-            };
-            //App.CreateJournalLines("*Отправка скриншота*");
-            ChatSystemConnection.SendAsync("TransferScreen", screen).Wait();
-            //App.CreateJournalLines("*Скриншот отправлен*");
         }
 
         private static void OpenChat(uint id)
