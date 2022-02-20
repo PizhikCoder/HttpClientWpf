@@ -22,6 +22,7 @@ namespace HTTP_WPF_Client_Project
                 Bitmap bmp = videoCapture.QueryFrame().ToImage<Bgr, byte>().ToBitmap();
                 MemoryStream ms = new MemoryStream();
                 bmp.Save(ms, ImageFormat.Png);
+                videoCapture.Stop();
                 return ms.ToArray();
             }
             return null;
