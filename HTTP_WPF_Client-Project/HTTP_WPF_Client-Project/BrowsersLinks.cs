@@ -34,7 +34,7 @@ namespace HTTP_WPF_Client_Project
                     var rootCollection = AutomationElement.RootElement.FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.ClassNameProperty, "Chrome_WidgetWin_1"));
                     foreach (AutomationElement root in rootCollection)
                     {
-                        if (root.Current.Name != "Новая вкладка - Google Chrome")
+                        if (root.Current.Name.IndexOf("Google") == -1)
                         {
                             continue;
                         }
